@@ -1,0 +1,28 @@
+name: "Cross Commit"
+description: "Cross Commits Files from the base repository to another repo"
+inputs:
+  source-folder:
+    description: "Sub folder of the repository to copy"
+    required: true
+  destination-repository:
+    description: "Repository to be commited to"
+    required: true
+  destination-folder:
+    description: "Sub folder of the repository to copy into"
+    required: true
+  destination-branch:
+    description: "Branch of the destination repository to commit to"
+    required: true
+    default: "alpha"
+  github-token:
+    description: "Token of the github user to commit as"
+    required: true
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.source-folder }}
+    - ${{ inputs.destintation-repository }}
+    - ${{ inputs.destination-folder }}
+    - ${{ inputs.destination-branch }}
+    - ${{ inputs.github-token }}
