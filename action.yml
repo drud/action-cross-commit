@@ -5,7 +5,7 @@ inputs:
     description: "Sub folder of the repository to copy"
     required: true
   destination-repository:
-    description: "Repository to be commited to"
+    description: "Repository to be commited to. In case of private repository, state with access token as a secret"
     required: true
   destination-folder:
     description: "Sub folder of the repository to copy into"
@@ -14,9 +14,14 @@ inputs:
     description: "Branch of the destination repository to commit to"
     required: true
     default: "alpha"
-  github-token:
-    description: "Token of the github user to commit as"
+  git-user:
+    description: "User that will be used to create the git commit"
     required: true
+  git-user-email:
+    description: "User email that will be used to create the git commit"
+    required: true
+  excludes:
+    description: "Optionally exclude some directories from being synced in both src and dst. The value is treated as column separated list, e.g. skip_dir_in_src:.git:skip_dir_in_dst"
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -25,4 +30,6 @@ runs:
     - ${{ inputs.destintation-repository }}
     - ${{ inputs.destination-folder }}
     - ${{ inputs.destination-branch }}
-    - ${{ inputs.github-token }}
+    - ${{ inputs.git-user }}
+    - ${{ inputs.git-user-email }}
+    - ${{ inputs.excludes }}
