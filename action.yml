@@ -27,7 +27,7 @@ runs:
   image: "Dockerfile"
   args:
     - ${{ inputs.source-folder }}
-    - ${{ inputs.destintation-repository }}
+    - ${{ inputs.destination-repository }}
     - ${{ inputs.destination-folder }}
     - ${{ inputs.destination-branch }}
     - ${{ inputs.git-user }}

@@ -11,7 +11,7 @@ GIT_USER="$5"
 GIT_EMAIL="$6"
 EXCLUDES=()
 if [[ ! -z ${7+x} ]]; then
-    X=(${X//:/ })
+    X=(${7//:/ })
     for x in "${X[@]}"; do
         EXCLUDES+=('--exclude')
         EXCLUDES+=("/$x")
@@ -29,8 +29,8 @@ cd $TEMP
 git checkout $BRANCH
 
 # Sync $TARGET folder to $REPO state repository with excludes
-echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$TARGET/ $TEMP'"
-rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$TARGET/ $TEMP
+echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$SOURCE/ $TEMP/$TARGET'"
+rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$SOURCE/ $TEMP/$TARGET
 
 # Success finish early if there are no changes
 if git diff --no-ext-diff --quiet; then
