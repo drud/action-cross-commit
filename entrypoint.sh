@@ -1,23 +1,49 @@
-#!/bin/sh -l
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # Ensure all variables are present
 SOURCE="$1"
 REPO="$2"
 TARGET="$3"
 BRANCH="$4"
-TOKEN="$5"
+GIT_USER="$5"
+GIT_EMAIL="$6"
+EXCLUDES=()
+if [[ ! -z ${7+x} ]]; then
+    X=(${X//:/ })
+    for x in "${X[@]}"; do
+        EXCLUDES+=('--exclude')
+        EXCLUDES+=("/$x")
+    done
+fi
 
-
-#Create Temporary Directory
-CURRENT=$(pwd)
+# Create Temporary Directory
 TEMP=$(mktemp -d)
-#SETUP TOKEN AUTH, think this is a temp NETRC Call, the token is basic-password, any value will work for basic-user
+
+# Setup git
+git config --global user.email $GIT_EMAIL
+git config --global user.name $GIT_USER
 git clone $REPO $TEMP
 cd $TEMP
 git checkout $BRANCH
-cp -R $CURRENT/$SOURCE $TEMP/$TARGET
+
+# Sync $TARGET folder to $REPO state repository with excludes
+echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$TARGET/ $TEMP'"
+rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$TARGET/ $TEMP
+
+# Success finish early if there are no changes
+if git diff --no-ext-diff --quiet; then
+  echo "no changes to sync"
+  exit 0
+fi
+
+# Add changes and push commit
 git add .
-git commit -m "Automatic CI SYNC Commit"
-git push origin $BRANCH
+SHORT_SHA=$(echo $GITHUB_SHA | head -c 6)
+git commit -F- <<EOF
+Automatic CI SYNC Commit $SHORT_SHA
 
-
+Syncing with $GITHUB_REPOSITORY commit $GITHUB_SHA
+EOF
+git push
