@@ -33,7 +33,7 @@ echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$SOURCE/ $
 rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$SOURCE/ $TEMP/$TARGET
 
 # Success finish early if there are no changes
-if git diff --no-ext-diff --quiet; then
+if [ -z "$(git status --porcelain)" ]; then
   echo "no changes to sync"
   exit 0
 fi
