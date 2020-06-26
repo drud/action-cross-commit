@@ -29,8 +29,12 @@ cd $TEMP
 git checkout $BRANCH
 
 # Sync $TARGET folder to $REPO state repository with excludes
-echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$SOURCE/ $TEMP/$TARGET'"
-rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/$SOURCE/ $TEMP/$TARGET
+f="/"
+if [[ -f "${GITHUB_WORKSPACE}/${SOURCE}" ]]; then
+    f=""
+then
+echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET'"
+rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET
 
 # Success finish early if there are no changes
 if [ -z "$(git status --porcelain)" ]; then
