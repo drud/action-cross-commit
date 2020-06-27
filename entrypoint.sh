@@ -32,7 +32,7 @@ git checkout $BRANCH
 f="/"
 if [[ -f "${GITHUB_WORKSPACE}/${SOURCE}" ]]; then
     f=""
-then
+fi
 echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET'"
 rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET
 
