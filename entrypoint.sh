@@ -26,7 +26,16 @@ git config --global user.email $GIT_EMAIL
 git config --global user.name $GIT_USER
 git clone $REPO $TEMP
 cd $TEMP
-git checkout $BRANCH
+
+# Check if branch exists
+LS_REMOTE="$(git ls-remote --heads origin refs/heads/$BRANCH)"
+if [[ -n "$LS_REMOTE" ]]; then
+  echo "Checking out $BRANCH from origin."
+  git checkout $BRANCH
+else
+  echo "$BRANCH does not exist on origin, creating new branch."
+  git checkout -b $BRANCH
+fi
 
 # Sync $TARGET folder to $REPO state repository with excludes
 f="/"
@@ -37,7 +46,8 @@ echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}$
 rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET
 
 # Success finish early if there are no changes
-if [ -z "$(git status --porcelain)" ]; then
+# i.e. up to date and branch exists
+if [ -z "$(git status --porcelain)" ] && [ -n "$LS_REMOTE" ]; then
   echo "no changes to sync"
   exit 0
 fi
@@ -50,4 +60,8 @@ Automatic CI SYNC Commit $SHORT_SHA
 
 Syncing with $GITHUB_REPOSITORY commit $GITHUB_SHA
 EOF
-git push
+if [[ -n "$LS_REMOTE" ]]; then
+  git push
+else
+  git push origin $BRANCH
+fi
