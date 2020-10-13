@@ -9,9 +9,10 @@ TARGET="$3"
 BRANCH="$4"
 GIT_USER="$5"
 GIT_EMAIL="$6"
+GIT_COMMIT_MSG="$7"
 EXCLUDES=()
-if [[ ! -z ${7+x} ]]; then
-    X=(${7//:/ })
+if [[ ! -z ${8+x} ]]; then
+    X=(${8//:/ })
     for x in "${X[@]}"; do
         EXCLUDES+=('--exclude')
         EXCLUDES+=("/$x")
@@ -54,12 +55,18 @@ fi
 
 # Add changes and push commit
 git add .
-SHORT_SHA=$(echo $GITHUB_SHA | head -c 6)
-git commit -F- <<EOF
+
+if [[ -n "$GIT_COMMIT_MSG" ]]; then
+  git commit -m "$GIT_COMMIT_MSG"
+else
+  SHORT_SHA=$(echo $GITHUB_SHA | head -c 6)
+  git commit -F- <<EOF
 Automatic CI SYNC Commit $SHORT_SHA
 
 Syncing with $GITHUB_REPOSITORY commit $GITHUB_SHA
 EOF
+fi
+
 if [[ -n "$LS_REMOTE" ]]; then
   git push
 else

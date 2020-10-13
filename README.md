@@ -20,8 +20,9 @@ steps:
     destination-repository: https://<user>:${{ secrets.user_token }}@github.com/org/dest-repo
     destination-folder: .
     destination-branch: alpha
-    git-user: "Git User" 
+    git-user: "Git User"
     git-user-email: git-user@email.com
+    git-commit-message: "Custom commit message (optional)"
     excludes: README.md:.git:path/deeper/in/the/repo
 ```
 

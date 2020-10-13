@@ -20,6 +20,10 @@ inputs:
   git-user-email:
     description: "User email that will be used to create the git commit"
     required: true
+  git-commit-message:
+    description: "Custom commit message to use"
+    default: ""
+    required: false
   excludes:
     description: "Optionally exclude some directories from being synced in both src and dst. The value is treated as column separated list, e.g. skip_dir_in_src:.git:skip_dir_in_dst"
 runs:
