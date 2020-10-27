@@ -36,4 +36,5 @@ runs:
     - ${{ inputs.destination-branch }}
     - ${{ inputs.git-user }}
     - ${{ inputs.git-user-email }}
+    - ${{ inputs.git-commit-message }}
     - ${{ inputs.excludes }}
