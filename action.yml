@@ -26,6 +26,7 @@ inputs:
     required: false
   excludes:
     description: "Optionally exclude some directories from being synced in both src and dst. The value is treated as column separated list, e.g. skip_dir_in_src:.git:skip_dir_in_dst"
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
