@@ -11,9 +11,10 @@ GIT_USER="$5"
 GIT_EMAIL="$6"
 GIT_COMMIT_MSG="$7"
 EXCLUDES=()
-if [[ ! -z ${8+x} ]]; then
-    X=(${8//:/ })
-    for x in "${X[@]}"; do
+
+if [[ -n ${8+x} ]]; then
+    X=("${8//:/ }")
+    for x in ${X[*]}; do
         EXCLUDES+=('--exclude')
         EXCLUDES+=("/$x")
     done
@@ -23,19 +24,19 @@ fi
 TEMP=$(mktemp -d)
 
 # Setup git
-git config --global user.email $GIT_EMAIL
-git config --global user.name $GIT_USER
-git clone $REPO $TEMP
-cd $TEMP
+git config --global user.email "$GIT_EMAIL"
+git config --global user.name "$GIT_USER"
+git clone "$REPO" "$TEMP"
+cd "$TEMP"
 
 # Check if branch exists
-LS_REMOTE="$(git ls-remote --heads origin refs/heads/$BRANCH)"
+LS_REMOTE="$(git ls-remote --heads origin refs/heads/"$BRANCH")"
 if [[ -n "$LS_REMOTE" ]]; then
   echo "Checking out $BRANCH from origin."
-  git checkout $BRANCH
+  git checkout "$BRANCH"
 else
   echo "$BRANCH does not exist on origin, creating new branch."
-  git checkout -b $BRANCH
+  git checkout -b "$BRANCH"
 fi
 
 # Sync $TARGET folder to $REPO state repository with excludes
@@ -43,8 +44,8 @@ f="/"
 if [[ -f "${GITHUB_WORKSPACE}/${SOURCE}" ]]; then
     f=""
 fi
-echo "running 'rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET'"
-rsync -avh --delete "${EXCLUDES[@]}" $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET
+echo "running 'rsync -avh --delete ${EXCLUDES[*]} $GITHUB_WORKSPACE/${SOURCE}${f} $TEMP/$TARGET'"
+rsync -avh --delete "${EXCLUDES[@]}" "$GITHUB_WORKSPACE/${SOURCE}${f}" "$TEMP/$TARGET"
 
 # Success finish early if there are no changes
 # i.e. up to date and branch exists
@@ -59,7 +60,7 @@ git add .
 if [[ -n "$GIT_COMMIT_MSG" ]]; then
   git commit -m "$GIT_COMMIT_MSG"
 else
-  SHORT_SHA=$(echo $GITHUB_SHA | head -c 6)
+  SHORT_SHA=$(echo "$GITHUB_SHA" | head -c 6)
   git commit -F- <<EOF
 Automatic CI SYNC Commit $SHORT_SHA
 
@@ -70,5 +71,5 @@ fi
 if [[ -n "$LS_REMOTE" ]]; then
   git push
 else
-  git push origin $BRANCH
+  git push origin "$BRANCH"
 fi
