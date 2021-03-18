@@ -23,6 +23,7 @@ steps:
     git-user: "Git User"
     git-user-email: git-user@email.com
     git-commit-message: "Custom commit message (optional)"
+    git-commit-sign-off: "false"
     excludes: README.md:.git:path/deeper/in/the/repo
 ```
 
