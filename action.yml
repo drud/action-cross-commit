@@ -24,6 +24,10 @@ inputs:
     description: "Custom commit message to use"
     default: ""
     required: false
+  git-commit-sign-off:
+    description: "Sign-off commit"
+    default: "false"
+    required: false
   excludes:
     description: "Optionally exclude some directories from being synced in both src and dst. The value is treated as column separated list, e.g. skip_dir_in_src:.git:skip_dir_in_dst"
     required: false
@@ -38,4 +42,5 @@ runs:
     - ${{ inputs.git-user }}
     - ${{ inputs.git-user-email }}
     - ${{ inputs.git-commit-message }}
+    - ${{ inputs.git-commit-sign-off }}
     - ${{ inputs.excludes }}
